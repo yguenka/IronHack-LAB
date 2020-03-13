@@ -32,28 +32,25 @@ SELECT 	authors.au_id,
 SELECT 	authors.au_id,
 		authors.au_lname,
 		authors.au_fname,
-		(titles.price (*) titles.ytd_sales) AS total
+		COALESCE(SUM(sales.qty), 0) AS total
 		FROM authors
-		INNER JOIN titleauthor
+		LEFT JOIN titleauthor
 		ON authors.au_id = titleauthor.au_id
-		INNER JOIN titles
-		ON titleauthor.title_id = titles.title_id
-		GROUP BY authors.au_id , authors.au_lname, authors.au_fname, total
+		LEFT JOIN sales
+		ON sales.title_id = sales.title_id
+		GROUP BY authors.au_id , authors.au_lname, authors.au_fname
 		ORDER BY total DESC
 		LIMIT 3;
 		
-		
---## Challenge 3 - Best Selling Author
---Who are the top 3 authors who have sold the highest number of titles? Write a query to find out
---Requirements:
---Your output should have the following columns:
---`AUTHOR ID` - the ID of the author
---`LAST NAME` - author last name
---`FIRST NAME` - author first name
---`TOTAL` - total number of titles sold from this author
---Your output should be ordered based on `TOTAL` from high to low.
---Only output the top 3 best selling authors.
-
-
---Challenge 4 - Best Selling Authors Rankin
---Now modify your solution in Challenge 3 so that the output will display all 23 authors instead of the top 3. Note that the authors who have sold 0 titles should also appear in your output (ideally display `0` instead of `NULL` as the `TOTAL`). Also order your results based on `TOTAL` from high to low.
+--Challenge 4 
+SELECT 	authors.au_id,
+		authors.au_lname,
+		authors.au_fname,
+		COALESCE(SUM(sales.qty), 0) AS total
+		FROM authors
+		LEFT JOIN titleauthor
+		ON authors.au_id = titleauthor.au_id
+		LEFT JOIN sales
+		ON sales.title_id = sales.title_id
+		GROUP BY authors.au_id , authors.au_lname, authors.au_fname
+		ORDER BY total DESC;
